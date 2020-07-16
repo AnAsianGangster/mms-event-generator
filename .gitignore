@@ -1,0 +1,5 @@
+*.csv
+*.class
+*.xml
+*.txt
+makefile
