@@ -38,7 +38,6 @@ class EventGenerator {
             // analyzerOutputStream.println("    //                                  attr_value_string,");
             // analyzerOutputStream.println("    //                                  attr_value);");
             // analyzerOutputStream.print("    ");
-            
 
             // zeek target data
             while (inputStream.hasNext()) {
@@ -46,11 +45,9 @@ class EventGenerator {
                 String[] values = data.split(",");
                 // System.out.print(values[1]);
                 for (int i = 0; i < attributeNames.length; i++) {
-                    analyzerOutputStream.println("    " + "string " + attributeNames[i] + " = " + values[i] + ";");
+                    analyzerOutputStream.println("    " + "string from_csv_" + attributeNames[i] + " = \"" + values[i] + "\";");
                 }
             }
-
-            analyzerOutputStream.println();
             analyzerOutputStream.println("    int attr_value_string = 1;");
             analyzerOutputStream.println("    int attr_value = 1;");
             analyzerOutputStream.println("    BifEvent::generate_mms_event_test(connection()->bro_analyzer(),");
