@@ -7,7 +7,16 @@ import java.util.Scanner;
 
 class EventGenerator {
 
-    public static String getBifDataString(String attributeName, String dataType, int lineCounter){
+    private static int numOfBool = 0;
+    private static int numOfInt = 0;
+    private static int numOfUtc = 0;
+    private static int numOfOct = 0;
+    private static int numOfUnsigned = 0;
+    private static int numOfVisible = 0;
+    private static int numOfBit = 0;
+    private static int numOfFloat = 0;
+
+    private static String getBifDataString(String attributeName, String dataType, int lineCounter){
         String returnString = "";
         switch (dataType) {
             case "bool":
@@ -49,7 +58,7 @@ class EventGenerator {
         return returnString;
     }
 
-    public static String getEventDataString(String attributeName, String dataType, int lineCounter){
+    private static String getEventDataString(String attributeName, String dataType, int lineCounter){
         String returnString = "";
         switch (dataType) {
             case "bool":
@@ -91,11 +100,11 @@ class EventGenerator {
         return returnString;
     }
 
-    public static String getDataString(String attributeName, String dataType, int lineCounter) {
+    private static String getDataString(String attributeName, String dataType, int lineCounter) {
         String returnString = "";
         switch (dataType) {
             case "bool":
-                returnString = attributeName + "_for_csv_line_" + lineCounter
+                returnString = "bool " + attributeName + "_for_csv_line_" + lineCounter
                         + " = (this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter
                         + "][0].first == \"true\") ? true : false;";
                 break;
@@ -209,10 +218,11 @@ class EventGenerator {
                 String[] values = data.split(",");
 
                 // analyzer_test.pac
-                for (int i = 0; i < attributeNames.length; i++) {
-                    analyzerOutputStream.println("    " + "string " + attributeNames[i] + "_from_csv_line_" + lineCounter + " = \"" + values[i] + "\";");
-                }
-                analyzerOutputStream.println("    " + values[2] + " result_data_for_csv_line_" + lineCounter + ";");
+                // for (int i = 0; i < attributeNames.length; i++) {
+                //     analyzerOutputStream.println("    " + "string " + attributeNames[i] + "_from_csv_line_" + lineCounter + " = \"" + values[i] + "\";");
+                // }
+                analyzerOutputStream.println("    " + "string " + attributeNames[0] + "_from_csv_line_" + lineCounter + " = \"" + values[0] + "\";");
+                // analyzerOutputStream.println("    " + values[2] + " result_data_for_csv_line_" + lineCounter + ";");
                 analyzerOutputStream.println("    if(data_map.find(\"" + values[0] + "\") != data_map.end()){");
                 analyzerOutputStream.println("      cout << \"\\x1B[36m\" << \"[MAP DATA]\" << \"\\033[0m\" << this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first << endl;");
                 analyzerOutputStream.println("      " + getDataString("result_data", values[2], lineCounter));
@@ -222,7 +232,7 @@ class EventGenerator {
                 analyzerOutputStream.println(getBifDataString("result_data", values[2], lineCounter));
                 analyzerOutputStream.println("                                      );");
                 analyzerOutputStream.println("    }");
-                analyzerOutputStream.print("\n\n");
+                analyzerOutputStream.println();
 
                 // event_test.bif TODO other data type
                 eventOutputStream.println("##");
@@ -232,7 +242,7 @@ class EventGenerator {
                 eventOutputStream.println("##");
                 eventOutputStream.print("event auto_event_"+ lineCounter + "%(c: connection, invoke_id: int, ");
                 eventOutputStream.print(getEventDataString("result_data", values[2], lineCounter));
-                eventOutputStream.print("%);" + "\n\n\n");
+                eventOutputStream.print("%);" + "\n");
 
                 // auto_events.bro
                 scriptOutputStream.println("event auto_event_" + lineCounter + "(c: connection, invoke_id: int, " + getEventDataString("result_data", values[2], lineCounter) + ") {");
