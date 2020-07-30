@@ -16,39 +16,39 @@ class EventGenerator {
     private static int numOfBit = 0;
     private static int numOfFloat = 0;
 
-    private static String getBifDataString(String attributeName, String dataType, int lineCounter){
+    private static String buildBifDataString(String dataType, int lineCounter){
         String returnString = "";
         switch (dataType) {
             case "bool":
-                returnString = "                                      " + attributeName + "_for_csv_line_" + lineCounter;
+                returnString = "                                      " + "num_" + numOfBool + "_bool" + "_for_csv_line_" + lineCounter;
                 break;
         
             case "int":
-                returnString = "                                      " + attributeName + "_for_csv_line_" + lineCounter;
+                returnString = "                                      " + "num_" + numOfInt + "_int" + "_for_csv_line_" + lineCounter;
                 break;
         
             case "utc_time":
-                returnString = "                                      string_to_val(" + attributeName + "_for_csv_line_" + lineCounter + ")";
+                returnString = "                                      string_to_val(" + "num_" + numOfUtc + "_utc" + "_for_csv_line_" + lineCounter + ")";
                 break;
         
             case "octet_string":
-                returnString = "                                      string_to_val(" + attributeName + "_for_csv_line_" + lineCounter + ")";
+                returnString = "                                      string_to_val(" + "num_" + numOfOct + "_oct" + "_for_csv_line_" + lineCounter + ")";
                 break;
         
             case "unsigned_int":
-                returnString = "                                      " + attributeName + "_for_csv_line_" + lineCounter;
+                returnString = "                                      " + "num_" + numOfUnsigned + "_unsigned" + "_for_csv_line_" + lineCounter;
                 break;
         
             case "visible_string":
-                returnString = "                                      string_to_val(" + attributeName + "_for_csv_line_" + lineCounter + ")";
+                returnString = "                                      string_to_val(" + "num_" + numOfVisible + "_visible" + "_for_csv_line_" + lineCounter + ")";
                 break;
         
             case "bit_string":
-                returnString = "                                      string_to_val(" + attributeName + "_for_csv_line_" + lineCounter + ")";
+                returnString = "                                      string_to_val(" + "num_" + numOfBit + "_bit" + "_for_csv_line_" + lineCounter + ")";
                 break;
         
             case "float":  // as int for now
-                returnString = "                                      " + attributeName + "_for_csv_line_" + lineCounter;
+                returnString = "                                      " + "num_" + numOfFloat + "_float" + "_for_csv_line_" + lineCounter;
                 break;
         
             default:
@@ -58,39 +58,39 @@ class EventGenerator {
         return returnString;
     }
 
-    private static String getEventDataString(String attributeName, String dataType, int lineCounter){
+    private static String buildEventDataString(String dataType, int lineCounter){
         String returnString = "";
         switch (dataType) {
             case "bool":
-                returnString = attributeName + "_for_csv_line_" + lineCounter + ": " + "bool";
+                returnString = "num_" + numOfBool + "_bool" + "_for_csv_line_" + lineCounter + ": " + "bool";
                 break;
         
             case "int":
-                returnString = attributeName + "_for_csv_line_" + lineCounter + ": " + "int";
+                returnString = "num_" + numOfInt + "_int" + "_for_csv_line_" + lineCounter + ": " + "int";
                 break;
         
             case "utc_time":
-                returnString = attributeName + "_for_csv_line_" + lineCounter + ": " + "string";
+                returnString = "num_" + numOfUtc + "_utc" + "_for_csv_line_" + lineCounter + ": " + "string";
                 break;
         
             case "octet_string":
-                returnString = attributeName + "_for_csv_line_" + lineCounter + ": " + "stirng";
+                returnString = "num_" + numOfOct + "_oct" + "_for_csv_line_" + lineCounter + ": " + "stirng";
                 break;
         
             case "unsigned_int":
-                returnString = attributeName + "_for_csv_line_" + lineCounter + ": " + "count";
+                returnString = "num_" + numOfUnsigned + "_unsigned" + "_for_csv_line_" + lineCounter + ": " + "count";
                 break;
         
             case "visible_string":
-                returnString = attributeName + "_for_csv_line_" + lineCounter + ": " + "string";
+                returnString = "num_" + numOfVisible + "_visible" + "_for_csv_line_" + lineCounter + ": " + "string";
                 break;
         
             case "bit_string":
-                returnString = attributeName + "_for_csv_line_" + lineCounter + ": " + "string";
+                returnString = "num_" + numOfBit + "_bit" + "_for_csv_line_" + lineCounter + ": " + "string";
                 break;
         
             case "float":  // as int for now
-                returnString = attributeName + "_for_csv_line_" + lineCounter + ": " + "int";
+                returnString = "num_" + numOfFloat + "_float" + "_for_csv_line_" + lineCounter + ": " + "int";
                 break;
         
             default:
@@ -100,55 +100,89 @@ class EventGenerator {
         return returnString;
     }
 
-    private static String getDataString(String attributeName, String dataType, int lineCounter) {
+    private static String buildScriptDataString(String dataType, int lineCounter){
         String returnString = "";
         switch (dataType) {
             case "bool":
-                returnString = "bool " + attributeName + "_for_csv_line_" + lineCounter
-                        + " = (this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter
-                        + "][0].first == \"true\") ? true : false;";
+                returnString = "num_" + numOfBool + "_bool" + "_for_csv_line_" + lineCounter;
+                break;
+        
+            case "int":
+                returnString = "num_" + numOfInt + "_int" + "_for_csv_line_" + lineCounter;
+                break;
+        
+            case "utc_time":
+                returnString = "num_" + numOfUtc + "_utc" + "_for_csv_line_" + lineCounter;
+                break;
+        
+            case "octet_string":
+                returnString = "num_" + numOfOct + "_oct" + "_for_csv_line_" + lineCounter;
+                break;
+        
+            case "unsigned_int":
+                returnString = "num_" + numOfUnsigned + "_unsigned" + "_for_csv_line_" + lineCounter;
+                break;
+        
+            case "visible_string":
+                returnString = "num_" + numOfVisible + "_visible" + "_for_csv_line_" + lineCounter;
+                break;
+        
+            case "bit_string":
+                returnString = "num_" + numOfBit + "_bit" + "_for_csv_line_" + lineCounter;
+                break;
+        
+            case "float":  // as int for now
+                returnString = "num_" + numOfFloat + "_float" + "_for_csv_line_" + lineCounter;
+                break;
+        
+            default:
+                returnString = "error: int";
+                break;
+        }
+        return returnString;
+    }
+
+    private static String buildDataString(String dataType, int lineCounter) {
+        String returnString = "";
+        switch (dataType) {
+            case "bool":
+                numOfBool++;
+                returnString = "    bool " + "num_" + numOfBool + "_bool" + "_for_csv_line_" + lineCounter + " = (this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first == \"true\") ? true : false;";
                 break;
 
             case "int":
-                returnString = attributeName + "_for_csv_line_" + lineCounter
-                        + " = std::stoi(this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter
-                        + "][0].first);";
+                numOfInt++;
+                returnString = "    int " + "num_" + numOfInt + "_int" + "_for_csv_line_" + lineCounter + " = std::stoi(this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first);";
                 break;
 
             case "utc_time":
-                returnString = attributeName + "_for_csv_line_" + lineCounter
-                        + " = this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter
-                        + "][0].first;";
+                numOfUtc++;
+                returnString = "    string " + "num_" + numOfUtc + "_utc" + "_for_csv_line_" + lineCounter + " = this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first;";
                 break;
 
             case "octet_string":
-                returnString = attributeName + "_for_csv_line_" + lineCounter
-                        + " = this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter
-                        + "][0].first;";
+                numOfOct++;
+                returnString = "    string " + "num_" + numOfOct + "_oct" + "_for_csv_line_" + lineCounter + " = this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first;";
                 break;
 
             case "unsigned_int":
-                returnString = attributeName + "_for_csv_line_" + lineCounter
-                        + " = std::stoi(this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter
-                        + "][0].first);";
+                numOfUnsigned++;
+                returnString = "    unsigned " + "num_" + numOfUnsigned + "_unsigned" + "_for_csv_line_" + lineCounter + " = std::stoi(this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first);";
                 break;
 
             case "visible_string":
-                returnString = attributeName + "_for_csv_line_" + lineCounter
-                        + " = this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter
-                        + "][0].first;";
+                numOfVisible++;
+                returnString = "    string " + "num_" + numOfVisible + "_visible" + "_for_csv_line_" + lineCounter + " = this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first;";
                 break;
 
             case "bit_string":
-                returnString = attributeName + "_for_csv_line_" + lineCounter
-                        + " = this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter
-                        + "][0].first;";
+                numOfBit++;
+                returnString = "    string " + "num_" + numOfBit + "_bit" + "_for_csv_line_" + lineCounter + " = this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first;";
                 break;
 
             case "float": // as int for now
-                returnString = attributeName + "_for_csv_line_" + lineCounter
-                        + " = std::stoi(this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter
-                        + "][0].first);";
+                numOfFloat++;
+                returnString = "    int " + "num_" + numOfFloat + "_float" + "_for_csv_line_" + lineCounter + " = std::stoi(this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first);";
                 break;
 
             default:
@@ -163,6 +197,7 @@ class EventGenerator {
         String analyzerFilename = "../ResiGate/src/analyzer/protocol/mms/mms-analyzer-test.pac";
         String eventFilename = "../ResiGate/src/analyzer/protocol/mms/event_test.bif";
         String scriptFilename = "../ResiGate/scripts/base/protocols/mms/auto_events.bro";
+        String scriptRecordFilename = "../ResiGate/scripts/base/protocols/mms/auto_events_record.bro";
 
         String fileName = "user_configuration.csv";
         File file = new File(fileName);
@@ -180,26 +215,30 @@ class EventGenerator {
             FileWriter eventWriter = new FileWriter(eventFilename);
             PrintWriter eventOutputStream = new PrintWriter(eventWriter);
 
+            // write scripts records
+            FileWriter scriptRecordWriter = new FileWriter(scriptRecordFilename);
+            PrintWriter scriptRecordOutputStream = new PrintWriter(scriptRecordWriter);
+            scriptRecordOutputStream.println("module mms_test;");
+            scriptRecordOutputStream.println();
+            scriptRecordOutputStream.println("export {");
+            scriptRecordOutputStream.println("  type Info: record {");
+            scriptRecordOutputStream.println("      ## Timestamp for when the event happened.");
+            scriptRecordOutputStream.println("      ts:     time    &log;");
+            scriptRecordOutputStream.println("      ## Unique ID for the connection.");
+            scriptRecordOutputStream.println("      uid:    string  &log;");
+            scriptRecordOutputStream.println("      ## The connection's 4-tuple of endpoint addresses/ports.");
+            scriptRecordOutputStream.println("      id:     conn_id &log;");
+            scriptRecordOutputStream.println();
+            scriptRecordOutputStream.println("      # ## TODO: Add other fields here that you'd like to log.");
+            scriptRecordOutputStream.println("      Message_type: string &log;");
+            scriptRecordOutputStream.println("      invoke_id: int &log;");
+
             // write scripts
             FileWriter scriptWriter = new FileWriter(scriptFilename);
             PrintWriter scriptOutputStream = new PrintWriter(scriptWriter);
             scriptOutputStream.println("module mms_test;");
             scriptOutputStream.println();
             scriptOutputStream.println("redef enum Log::ID += { LOG };");
-            scriptOutputStream.println();
-            scriptOutputStream.println("type Info: record {");
-            scriptOutputStream.println("    ## Timestamp for when the event happened.");
-            scriptOutputStream.println("    ts:     time    &log;");
-            scriptOutputStream.println("    ## Unique ID for the connection.");
-            scriptOutputStream.println("    uid:    string  &log;");
-            scriptOutputStream.println("    ## The connection's 4-tuple of endpoint addresses/ports.");
-            scriptOutputStream.println("    id:     conn_id &log;");
-            scriptOutputStream.println();
-            scriptOutputStream.println("    # ## TODO: Add other fields here that you'd like to log.");
-            scriptOutputStream.println("    Message_type: string &log;");
-            scriptOutputStream.println("    invoke_id: int &log;");
-            scriptOutputStream.println("    boolean_result: bool &log;");
-            scriptOutputStream.println("};");
             scriptOutputStream.println();
             scriptOutputStream.println("global log_mms: event(rec: Info);");
             scriptOutputStream.println();
@@ -223,13 +262,13 @@ class EventGenerator {
                 // }
                 analyzerOutputStream.println("    " + "string " + attributeNames[0] + "_from_csv_line_" + lineCounter + " = \"" + values[0] + "\";");
                 // analyzerOutputStream.println("    " + values[2] + " result_data_for_csv_line_" + lineCounter + ";");
-                analyzerOutputStream.println("    if(data_map.find(\"" + values[0] + "\") != data_map.end()){");
+                analyzerOutputStream.println("    if(this->connection()->upflow()->data_map.find(\"" + values[0] + "\") != this->connection()->upflow()->data_map.end() && !this->connection()->upflow()->is_request){");
                 analyzerOutputStream.println("      cout << \"\\x1B[36m\" << \"[MAP DATA]\" << \"\\033[0m\" << this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first << endl;");
-                analyzerOutputStream.println("      " + getDataString("result_data", values[2], lineCounter));
+                analyzerOutputStream.println("  " + buildDataString(values[2], lineCounter));
                 analyzerOutputStream.println("      BifEvent::generate_auto_event_" + lineCounter + "(connection()->bro_analyzer(),");
                 analyzerOutputStream.println("                                      connection()->bro_analyzer()->Conn(),");
                 analyzerOutputStream.println("                                      this->connection()->upflow()->invoke_id,");
-                analyzerOutputStream.println(getBifDataString("result_data", values[2], lineCounter));
+                analyzerOutputStream.println(buildBifDataString(values[2], lineCounter));
                 analyzerOutputStream.println("                                      );");
                 analyzerOutputStream.println("    }");
                 analyzerOutputStream.println();
@@ -241,20 +280,23 @@ class EventGenerator {
                 eventOutputStream.println("##");
                 eventOutputStream.println("##");
                 eventOutputStream.print("event auto_event_"+ lineCounter + "%(c: connection, invoke_id: int, ");
-                eventOutputStream.print(getEventDataString("result_data", values[2], lineCounter));
+                eventOutputStream.print(buildEventDataString(values[2], lineCounter));
                 eventOutputStream.print("%);" + "\n");
 
+                // auto_events_record.bro
+                scriptRecordOutputStream.println("      " + buildEventDataString(values[2], lineCounter) + " &log;");
+
                 // auto_events.bro
-                scriptOutputStream.println("event auto_event_" + lineCounter + "(c: connection, invoke_id: int, " + getEventDataString("result_data", values[2], lineCounter) + ") {");
+                scriptOutputStream.println("event auto_event_" + lineCounter + "(c: connection, invoke_id: int, " + buildEventDataString(values[2], lineCounter) + ") {");
                 scriptOutputStream.println("    local info: Info;");
                 scriptOutputStream.println("	info$ts = network_time();");
                 scriptOutputStream.println("	info$uid = c$uid;");
                 scriptOutputStream.println("	info$id = c$id;");
                 scriptOutputStream.println("	info$Message_type = \"auto events\";");
                 scriptOutputStream.println("	info$invoke_id = invoke_id;");
-                scriptOutputStream.println("	info$boolean_result = " + "result_data_for_csv_line_"+ lineCounter + ";");
+                scriptOutputStream.println("	info$" + buildScriptDataString(values[2], lineCounter) + " = " + buildScriptDataString(values[2], lineCounter) + ";");
                 scriptOutputStream.println("	Log::write(LOG, info);");
-                scriptOutputStream.println("    print \"[SCRIPT EVENT] \" , " + "result_data_for_csv_line_" + lineCounter + " , invoke_id;");
+                scriptOutputStream.println("    print \"[SCRIPT EVENT] \" , " + buildScriptDataString(values[2], lineCounter) + " , invoke_id;");
                 scriptOutputStream.println("}");
                 scriptOutputStream.println();
                 lineCounter++;
@@ -268,6 +310,12 @@ class EventGenerator {
 
             // event
             eventOutputStream.close();
+
+            // script record
+            scriptRecordOutputStream.println("  };");
+            scriptRecordOutputStream.println("}");
+            scriptRecordOutputStream.println();
+            scriptRecordOutputStream.close();
 
             // script
             scriptOutputStream.close();
