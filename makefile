@@ -2,7 +2,8 @@
 REMOVE = rm
 CC = javac
 
-PROGRAM_NAME = EventGenerator
+PROGRAM_NAME = CsvGenerator
+# PROGRAM_NAME = EventGenerator
 
 
 # Explicit rules, all the commands you can call with make 
