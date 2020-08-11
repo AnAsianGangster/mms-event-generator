@@ -1,8 +1,11 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,12 +17,23 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class CsvGenerator {
+    // colors
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
 
-    private static final String targetString = "SCADA_Q2C_Sync_Activated";
+    // input file
+    private static final String configurationFilename = "./mms_configuration.csv";
+    // target file to write to
     private static final String csvFilename = "./user_configuration_test.csv";
 
-
-    private static String getDomainItemID(Node node){
+    private static String getIcdDomainItemID(Node node) {
         String serverName = "";
         String deviceName = "";
         String nodeName = "";
@@ -29,13 +43,13 @@ public class CsvGenerator {
 
         Node currentNode = node;
 
-        while(currentNode.getNodeName() != "DataAttributes"){
+        while (currentNode.getNodeName() != "DataAttributes") {
             currentNode = currentNode.getParentNode();
         }
         NodeList dataAttributesList = currentNode.getChildNodes();
-        for(int i = 0; i < dataAttributesList.getLength(); i++){
+        for (int i = 0; i < dataAttributesList.getLength(); i++) {
             Node dataAttributesNode = dataAttributesList.item(i);
-            if(dataAttributesNode.getNodeName() == "AttributeFC"){
+            if (dataAttributesNode.getNodeName() == "AttributeFC") {
                 attributeFC = dataAttributesNode.getTextContent();
             } else if (dataAttributesNode.getNodeName() == "AttributeName") {
                 attributeName = dataAttributesNode.getTextContent();
@@ -44,53 +58,52 @@ public class CsvGenerator {
         }
         dataAttributesList = null;
 
-        while(currentNode.getNodeName() != "DataObject"){
+        while (currentNode.getNodeName() != "DataObject") {
             currentNode = currentNode.getParentNode();
         }
         NodeList dataObjectList = currentNode.getChildNodes();
-        for(int i = 0; i < dataObjectList.getLength(); i++){
+        for (int i = 0; i < dataObjectList.getLength(); i++) {
             Node dataObjectNode = dataObjectList.item(i);
-            if(dataObjectNode.getNodeName() == "ObjectText"){
+            if (dataObjectNode.getNodeName() == "ObjectText") {
                 objectText = dataObjectNode.getTextContent();
             }
             dataObjectNode = null;
         }
         dataObjectList = null;
 
-        while(currentNode.getNodeName() != "LogicalNode"){
+        while (currentNode.getNodeName() != "LogicalNode") {
             currentNode = currentNode.getParentNode();
         }
         NodeList logicalNodeList = currentNode.getChildNodes();
-        for(int i = 0; i < logicalNodeList.getLength(); i++){
+        for (int i = 0; i < logicalNodeList.getLength(); i++) {
             Node logicalNodeNode = logicalNodeList.item(i);
-            if(logicalNodeNode.getNodeName() == "NodeText"){
+            if (logicalNodeNode.getNodeName() == "NodeText") {
                 nodeName = logicalNodeNode.getTextContent();
             }
             logicalNodeNode = null;
         }
         logicalNodeList = null;
 
-
-        while(currentNode.getNodeName() != "LogicalDevice"){
+        while (currentNode.getNodeName() != "LogicalDevice") {
             currentNode = currentNode.getParentNode();
         }
         NodeList logicalDeviceList = currentNode.getChildNodes();
-        for(int i = 0; i < logicalDeviceList.getLength(); i++){
+        for (int i = 0; i < logicalDeviceList.getLength(); i++) {
             Node logicalDeviceNode = logicalDeviceList.item(i);
-            if(logicalDeviceNode.getNodeName() == "DeviceName"){
+            if (logicalDeviceNode.getNodeName() == "DeviceName") {
                 deviceName = logicalDeviceNode.getTextContent();
             }
             logicalDeviceNode = null;
         }
         logicalDeviceList = null;
 
-        while(currentNode.getNodeName() != "Server"){
+        while (currentNode.getNodeName() != "Server") {
             currentNode = currentNode.getParentNode();
         }
         NodeList serverList = currentNode.getChildNodes();
-        for(int i = 0; i < serverList.getLength(); i++){
+        for (int i = 0; i < serverList.getLength(); i++) {
             Node serverNode = serverList.item(i);
-            if(serverNode.getNodeName() == "ServerName"){
+            if (serverNode.getNodeName() == "ServerName") {
                 serverName = serverNode.getTextContent();
             }
             serverNode = null;
@@ -100,7 +113,7 @@ public class CsvGenerator {
         return serverName + deviceName + "_" + nodeName + "$" + attributeFC + "$" + objectText + "$" + attributeName;
     }
 
-    private static String getIndexDataType(Node node){
+    private static String getIcdIndexDataType(Node node, String targetString) {
         String index = "";
         String dataType = "";
 
@@ -115,7 +128,7 @@ public class CsvGenerator {
         NodeList dataAttributesList = currentNode.getChildNodes();
         for (int i = 0; i < dataAttributesList.getLength(); i++) {
             Node dataAttributesNode = dataAttributesList.item(i);
-            if(dataAttributesNode.getNodeName() == "AttributeType"){
+            if (dataAttributesNode.getNodeName() == "AttributeType") {
                 dataType = dataAttributesNode.getTextContent();
             }
             dataAttributesNode = null;
@@ -127,22 +140,23 @@ public class CsvGenerator {
         for (int i = 0; i < dataAttributesList.getLength(); i++) {
             Node dataAttributesNode = dataAttributesList.item(i);
             if (dataAttributesNode.getNodeName() != "#text") {
-                if(dataAttributesNode.getNodeName() == "DataAttributes"){
+                if (dataAttributesNode.getNodeName() == "DataAttributes") {
                     NodeList nodeList = dataAttributesNode.getChildNodes();
-                    for(int j = 0; j < nodeList.getLength(); j++){
+                    for (int j = 0; j < nodeList.getLength(); j++) {
                         Node dataNode = nodeList.item(j);
-                        if(dataNode.getNodeName() == "AttributeText"){
+                        if (dataNode.getNodeName() == "AttributeText") {
                             dataAttributesStringList.add(dataNode.getTextContent());
                         }
                     }
-                };
+                }
+                ;
             }
             dataAttributesNode = null;
         }
         dataAttributesList = null;
 
         for (String string : dataAttributesStringList) {
-            if(string.contains(targetString)){
+            if (string.contains(targetString)) {
                 index = String.valueOf(dataAttributesStringList.indexOf(string));
             }
         }
@@ -153,51 +167,82 @@ public class CsvGenerator {
     }
 
     public static void main(String[] args) {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        // configuration file input stream
+        File inputFile = new File(configurationFilename);
+        Scanner inputStream;
+
         try {
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse("icd.xml");
+            inputStream = new Scanner(inputFile);
 
-            NodeList attributeTextList = document.getElementsByTagName("AttributeText");
+            // icd.xml reader
+            DocumentBuilderFactory icdFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder icdBuilder = icdFactory.newDocumentBuilder();
+            Document icdDocument = icdBuilder.parse("icd.xml");
 
-            String csvLine = "";
-            String domainItemID = "";
-            String indexDataType = "";
+            // icd DOM
+            NodeList icdAttributeTextList = icdDocument.getElementsByTagName("AttributeText");
 
-            for(int i = 0; i < attributeTextList.getLength(); i++){
-                Node node = attributeTextList.item(i);
-                String attributeText = node.getTextContent();
-                if(attributeText.contains(targetString)){
-                    // System.out.println("[raw nodes] -->" + attributeText);
-                    Node grandParentNode = node.getParentNode().getParentNode();
-                    String grandParentNodeName = grandParentNode.getNodeName();
-                    // System.out.println("grandParentNodeName -->" + grandParentNodeName);
-                    if(grandParentNodeName == "DataObject"){
-                        // System.out.println("[none data attribute] -->" + attributeText);
-                        domainItemID = getDomainItemID(node);
-                    } else if (grandParentNodeName == "DataAttributes"){
-                        indexDataType = getIndexDataType(node);
-                    };
-                }
-            }
+            // TODO configuration.xml reader and DOM builder
 
-            csvLine = domainItemID + indexDataType;
-
+            // file writer 
             FileWriter csvFileWriter = new FileWriter(csvFilename);
             PrintWriter csvOutputStream = new PrintWriter(csvFileWriter);
             csvOutputStream.println("item_id,index,data_type");
-            csvOutputStream.println(csvLine);
+
+            // each line
+            String csvLine;
+            String domainItemID = "";
+            String indexDataType = "";
+
+            // configuration file first line
+            String attributeNames = inputStream.nextLine();
+
+            while (inputStream.hasNext()) {
+                String attribute = inputStream.nextLine();
+
+                System.out.println(ANSI_RED + "[RUNNING]" + ANSI_RESET + " scanning for " + ANSI_YELLOW + attribute + ANSI_RESET);
+
+                for (int i = 0; i < icdAttributeTextList.getLength(); i++) {
+                    Node node = icdAttributeTextList.item(i);
+                    String attributeText = node.getTextContent();
+                    if (attributeText.contains(attribute)) {
+                        // System.out.println("[raw nodes] -->" + attributeText);
+                        Node grandParentNode = node.getParentNode().getParentNode();
+                        String grandParentNodeName = grandParentNode.getNodeName();
+                        // System.out.println("grandParentNodeName -->" + grandParentNodeName);
+                        if (grandParentNodeName == "DataObject") {
+                            // System.out.println("[none data attribute] -->" + attributeText);
+                            domainItemID = getIcdDomainItemID(node);
+                        } else if (grandParentNodeName == "DataAttributes") {
+                            indexDataType = getIcdIndexDataType(node, attribute);
+                        }
+                    }
+                }
+
+                csvLine = domainItemID + indexDataType;
+                csvOutputStream.println(csvLine);
+                csvLine = null;
+                domainItemID = null;
+                indexDataType = null;
+            }
+
+            // write to file
             csvOutputStream.close();
 
+            // free memory
+            icdFactory = null;
+            icdBuilder = null;
+            icdDocument = null;
+            icdAttributeTextList = null;
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
         } catch (ParserConfigurationException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (SAXException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
     }
 }
