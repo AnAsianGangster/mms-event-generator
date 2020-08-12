@@ -12,6 +12,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -166,6 +167,95 @@ public class CsvGenerator {
         return "," + index + "," + dataType;
     }
 
+    private static String getConfigDomainItemID(Node node) {
+        String serverName = "";
+        String deviceName = "";
+        String nodeName = "";
+        String attributeFC = "";
+        String objectText = "";
+        String attributeName = "";
+
+        Node parentNode = node.getParentNode();
+        NodeList CDataAttributeList = parentNode.getChildNodes();
+        for(int i = 0; i < CDataAttributeList.getLength(); i++){
+            Node CDataAttributeNode = CDataAttributeList.item(i);
+            if(CDataAttributeNode.getNodeName() != "#text"){
+                Element CDataAttributeElement = (Element) CDataAttributeNode;
+                String propertyName = CDataAttributeElement.getAttribute("Name");
+                if(propertyName.equals("FunctionBlockName")){
+                    String propertyVal = CDataAttributeElement.getAttribute("Val");
+                    // System.out.println(propertyVal);
+                    String[] firstSplit = propertyVal.split("_");
+                    String[] secondSplit = firstSplit[1].split("\\.");
+                    // System.out.println(secondSplit[1]);
+                    serverName = secondSplit[0];
+                    deviceName = secondSplit[1];
+                    nodeName = firstSplit[2];
+                    attributeFC = firstSplit[3];
+                    objectText = firstSplit[4];
+                    attributeName = firstSplit[5];
+                }
+            }
+        }
+
+        return serverName + deviceName + "_" + nodeName + "$" + attributeFC + "$" + objectText + "$" + attributeName;
+    }
+
+    private static String getConfigIndexDataType(Node node, String targeString){
+        String index = "";
+        String dataType = "";
+
+        List<String> dataAttributesStringList = new ArrayList<String>();
+
+        Node parentNode = node.getParentNode();
+        // System.out.println(parentNode.getNodeName());
+        NodeList CDataAttributeList = parentNode.getChildNodes();
+        for(int i = 0; i < CDataAttributeList.getLength(); i++){
+            Node CDataAttributeNode = CDataAttributeList.item(i);
+            if(CDataAttributeNode.getNodeName() != "#text"){
+                Element CDataAttributeElement = (Element) CDataAttributeNode;
+                // System.out.println(CDataAttributeNode.getNodeName());
+                if(CDataAttributeElement.getAttribute("Name").equals("BasicType")){
+                    dataType = CDataAttributeElement.getAttribute("Val");
+                }
+            }
+        }
+
+        Node currentNode = node;
+        while (currentNode.getNodeName() != "CLogicalNode") {
+            currentNode = currentNode.getParentNode();
+        }
+
+        // Node node = someChildNodeFromDifferentDocument;
+        DocumentBuilderFactory NodeFactory = DocumentBuilderFactory.newInstance();
+        NodeFactory.setNamespaceAware(true);
+        DocumentBuilder nodeBuilder;
+        try {
+            nodeBuilder = NodeFactory.newDocumentBuilder();
+            Document nodeDocument = nodeBuilder.newDocument();
+            Node importedNode = nodeDocument.importNode(currentNode, true);
+            nodeDocument.appendChild(importedNode);
+            NodeList CDataObjectList = nodeDocument.getElementsByTagName("Property");
+            for (int i = 0; i < CDataObjectList.getLength(); i++) {
+                Node CDataObjectNode = CDataObjectList.item(i);
+                // System.out.println(i);
+                if (CDataObjectNode.getNodeName() != "#text") {
+                    Element CDataObjectElement = (Element) CDataObjectNode;
+                    if (CDataObjectElement.getAttribute("Name").equals("ObjectVariable")) {
+                        dataAttributesStringList.add(CDataObjectElement.getAttribute("Val"));
+                    }
+                }
+            }
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(dataAttributesStringList);
+
+        index = String.valueOf(dataAttributesStringList.indexOf(targeString));
+
+        return "," + index + "," + dataType;
+    }
     public static void main(String[] args) {
         // configuration file input stream
         File inputFile = new File(configurationFilename);
@@ -174,15 +264,19 @@ public class CsvGenerator {
         try {
             inputStream = new Scanner(inputFile);
 
-            // icd.xml reader
+            // icd.xml DOM
             DocumentBuilderFactory icdFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder icdBuilder = icdFactory.newDocumentBuilder();
             Document icdDocument = icdBuilder.parse("icd.xml");
-
-            // icd DOM
+            //  target NodeList
             NodeList icdAttributeTextList = icdDocument.getElementsByTagName("AttributeText");
-
-            // TODO configuration.xml reader and DOM builder
+            
+            // configuration.xml DOM
+            DocumentBuilderFactory configFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder configBuilder = configFactory.newDocumentBuilder();
+            Document configDocument = configBuilder.parse("configuration.xml");
+            // target NodeList
+            NodeList configAttributeTextList = configDocument.getElementsByTagName("Property");
 
             // file writer 
             FileWriter csvFileWriter = new FileWriter(csvFilename);
@@ -202,6 +296,7 @@ public class CsvGenerator {
 
                 System.out.println(ANSI_RED + "[RUNNING]" + ANSI_RESET + " scanning for " + ANSI_YELLOW + attribute + ANSI_RESET);
 
+                // scanning icd DOM
                 for (int i = 0; i < icdAttributeTextList.getLength(); i++) {
                     Node node = icdAttributeTextList.item(i);
                     String attributeText = node.getTextContent();
@@ -219,11 +314,28 @@ public class CsvGenerator {
                     }
                 }
 
+                // TODO scanning configuration DOM
+                for (int i = 0; i < configAttributeTextList.getLength(); i++){
+                    // System.out.println(i);
+                    Node node = configAttributeTextList.item(i);
+                    Element element = (Element) node;
+                    String propertyVal = element.getAttribute("Val");
+                    if(propertyVal.equals(attribute)){
+                        // System.out.println("[raw nodes] " + propertyVal);
+                        Node grandParentNode = node.getParentNode().getParentNode();
+                        String grandParentNodeName = grandParentNode.getNodeName();
+                        if(grandParentNodeName == "CDataObject"){
+                            domainItemID = getConfigDomainItemID(node);
+                            indexDataType = getConfigIndexDataType(node, propertyVal);
+                        }
+                    }
+                }
+
                 csvLine = domainItemID + indexDataType;
                 csvOutputStream.println(csvLine);
-                csvLine = null;
-                domainItemID = null;
-                indexDataType = null;
+                csvLine = "";
+                domainItemID = "";
+                indexDataType = "";
             }
 
             // write to file

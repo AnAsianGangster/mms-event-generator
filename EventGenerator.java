@@ -19,35 +19,35 @@ class EventGenerator {
     private static String buildBifDataString(String dataType, int lineCounter){
         String returnString = "";
         switch (dataType) {
-            case "bool":
+            case "BOOLEAN":
                 returnString = "                                      " + "num_" + numOfBool + "_bool" + "_for_csv_line_" + lineCounter;
                 break;
         
-            case "int":
+            case "INT32U":
                 returnString = "                                      " + "num_" + numOfInt + "_int" + "_for_csv_line_" + lineCounter;
                 break;
         
-            case "utc_time":
+            case "TIMESTAMP":
                 returnString = "                                      string_to_val(" + "num_" + numOfUtc + "_utc" + "_for_csv_line_" + lineCounter + ")";
                 break;
         
-            case "octet_string":
+            case "VISSTRING65":
                 returnString = "                                      string_to_val(" + "num_" + numOfOct + "_oct" + "_for_csv_line_" + lineCounter + ")";
                 break;
         
-            case "unsigned_int":
+            case "INT8":
                 returnString = "                                      " + "num_" + numOfUnsigned + "_unsigned" + "_for_csv_line_" + lineCounter;
                 break;
         
-            case "visible_string":
+            case "VISSTRING255":
                 returnString = "                                      string_to_val(" + "num_" + numOfVisible + "_visible" + "_for_csv_line_" + lineCounter + ")";
                 break;
         
-            case "bit_string":
+            case "QUALITY":
                 returnString = "                                      string_to_val(" + "num_" + numOfBit + "_bit" + "_for_csv_line_" + lineCounter + ")";
                 break;
         
-            case "float":  // as int for now
+            case "FLOAT32":  // as int for now
                 returnString = "                                      " + "num_" + numOfFloat + "_float" + "_for_csv_line_" + lineCounter;
                 break;
         
@@ -61,35 +61,35 @@ class EventGenerator {
     private static String buildEventDataString(String dataType, int lineCounter){
         String returnString = "";
         switch (dataType) {
-            case "bool":
+            case "BOOLEAN":
                 returnString = "num_" + numOfBool + "_bool" + "_for_csv_line_" + lineCounter + ": " + "bool";
                 break;
         
-            case "int":
+            case "INT32U":
                 returnString = "num_" + numOfInt + "_int" + "_for_csv_line_" + lineCounter + ": " + "int";
                 break;
         
-            case "utc_time":
+            case "TIMESTAMP":
                 returnString = "num_" + numOfUtc + "_utc" + "_for_csv_line_" + lineCounter + ": " + "string";
                 break;
         
-            case "octet_string":
+            case "VISSTRING65":
                 returnString = "num_" + numOfOct + "_oct" + "_for_csv_line_" + lineCounter + ": " + "stirng";
                 break;
         
-            case "unsigned_int":
+            case "INT8":
                 returnString = "num_" + numOfUnsigned + "_unsigned" + "_for_csv_line_" + lineCounter + ": " + "count";
                 break;
         
-            case "visible_string":
+            case "VISSTRING255":
                 returnString = "num_" + numOfVisible + "_visible" + "_for_csv_line_" + lineCounter + ": " + "string";
                 break;
         
-            case "bit_string":
+            case "QUALITY":
                 returnString = "num_" + numOfBit + "_bit" + "_for_csv_line_" + lineCounter + ": " + "string";
                 break;
         
-            case "float":  // as int for now
+            case "FLOAT32":  // as int for now
                 returnString = "num_" + numOfFloat + "_float" + "_for_csv_line_" + lineCounter + ": " + "int";
                 break;
         
@@ -103,35 +103,35 @@ class EventGenerator {
     private static String buildScriptDataString(String dataType, int lineCounter){
         String returnString = "";
         switch (dataType) {
-            case "bool":
+            case "BOOLEAN":
                 returnString = "num_" + numOfBool + "_bool" + "_for_csv_line_" + lineCounter;
                 break;
         
-            case "int":
+            case "INT32U":
                 returnString = "num_" + numOfInt + "_int" + "_for_csv_line_" + lineCounter;
                 break;
         
-            case "utc_time":
+            case "TIMESTAMP":
                 returnString = "num_" + numOfUtc + "_utc" + "_for_csv_line_" + lineCounter;
                 break;
         
-            case "octet_string":
+            case "VISSTRING65":
                 returnString = "num_" + numOfOct + "_oct" + "_for_csv_line_" + lineCounter;
                 break;
         
-            case "unsigned_int":
+            case "INT8":
                 returnString = "num_" + numOfUnsigned + "_unsigned" + "_for_csv_line_" + lineCounter;
                 break;
         
-            case "visible_string":
+            case "VISSTRING255":
                 returnString = "num_" + numOfVisible + "_visible" + "_for_csv_line_" + lineCounter;
                 break;
         
-            case "bit_string":
+            case "QUALITY":
                 returnString = "num_" + numOfBit + "_bit" + "_for_csv_line_" + lineCounter;
                 break;
         
-            case "float":  // as int for now
+            case "FLOAT32":  // as int for now
                 returnString = "num_" + numOfFloat + "_float" + "_for_csv_line_" + lineCounter;
                 break;
         
@@ -145,42 +145,42 @@ class EventGenerator {
     private static String buildDataString(String dataType, int lineCounter) {
         String returnString = "";
         switch (dataType) {
-            case "bool":
+            case "BOOLEAN":
                 numOfBool++;
                 returnString = "    bool " + "num_" + numOfBool + "_bool" + "_for_csv_line_" + lineCounter + " = (this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first == \"true\") ? true : false;";
                 break;
 
-            case "int":
+            case "INT32U":
                 numOfInt++;
                 returnString = "    int " + "num_" + numOfInt + "_int" + "_for_csv_line_" + lineCounter + " = std::stoi(this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first);";
                 break;
 
-            case "utc_time":
+            case "TIMESTAMP":
                 numOfUtc++;
                 returnString = "    string " + "num_" + numOfUtc + "_utc" + "_for_csv_line_" + lineCounter + " = this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first;";
                 break;
 
-            case "octet_string":
+            case "VISSTRING65":
                 numOfOct++;
                 returnString = "    string " + "num_" + numOfOct + "_oct" + "_for_csv_line_" + lineCounter + " = this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first;";
                 break;
 
-            case "unsigned_int":
+            case "INT8":
                 numOfUnsigned++;
                 returnString = "    unsigned " + "num_" + numOfUnsigned + "_unsigned" + "_for_csv_line_" + lineCounter + " = std::stoi(this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first);";
                 break;
 
-            case "visible_string":
+            case "VISSTRING255":
                 numOfVisible++;
                 returnString = "    string " + "num_" + numOfVisible + "_visible" + "_for_csv_line_" + lineCounter + " = this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first;";
                 break;
 
-            case "bit_string":
+            case "QUALITY":
                 numOfBit++;
                 returnString = "    string " + "num_" + numOfBit + "_bit" + "_for_csv_line_" + lineCounter + " = this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first;";
                 break;
 
-            case "float": // as int for now
+            case "FLOAT32": // as int for now
                 numOfFloat++;
                 returnString = "    int " + "num_" + numOfFloat + "_float" + "_for_csv_line_" + lineCounter + " = std::stoi(this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first);";
                 break;
