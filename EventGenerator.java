@@ -199,7 +199,12 @@ class EventGenerator {
         String scriptFilename = "../ResiGate/scripts/base/protocols/mms/auto_events.bro";
         String scriptRecordFilename = "../ResiGate/scripts/base/protocols/mms/auto_events_record.bro";
 
-        String fileName = "user_configuration.csv";
+        // run csv 
+        String configurationFile = "./mms_configuration.csv";
+        CsvGenerator.ParseDOM(configurationFile);
+
+        String fileName = "user_configuration_test.csv";
+
         File file = new File(fileName);
 
         try {

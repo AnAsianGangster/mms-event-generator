@@ -29,8 +29,6 @@ public class CsvGenerator {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
-    // input file
-    private static final String configurationFilename = "./mms_configuration.csv";
     // target file to write to
     private static final String csvFilename = "./user_configuration_test.csv";
 
@@ -250,15 +248,16 @@ public class CsvGenerator {
             e.printStackTrace();
         }
 
-        System.out.println(dataAttributesStringList);
+        // System.out.println(dataAttributesStringList);
 
         index = String.valueOf(dataAttributesStringList.indexOf(targeString));
 
         return "," + index + "," + dataType;
     }
-    public static void main(String[] args) {
+
+    public static boolean ParseDOM(String targetConfigurationFile) {
         // configuration file input stream
-        File inputFile = new File(configurationFilename);
+        File inputFile = new File(targetConfigurationFile);
         Scanner inputStream;
 
         try {
@@ -314,7 +313,7 @@ public class CsvGenerator {
                     }
                 }
 
-                // TODO scanning configuration DOM
+                // scanning configuration DOM
                 for (int i = 0; i < configAttributeTextList.getLength(); i++){
                     // System.out.println(i);
                     Node node = configAttributeTextList.item(i);
@@ -356,5 +355,6 @@ public class CsvGenerator {
             e.printStackTrace();
         }
 
+        return true;
     }
 }
