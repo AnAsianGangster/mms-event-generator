@@ -267,7 +267,7 @@ class EventGenerator {
                 // }
                 analyzerOutputStream.println("    " + "string " + attributeNames[0] + "_from_csv_line_" + lineCounter + " = \"" + values[0] + "\";");
                 // analyzerOutputStream.println("    " + values[2] + " result_data_for_csv_line_" + lineCounter + ";");
-                analyzerOutputStream.println("    if(this->connection()->upflow()->data_map.find(\"" + values[0] + "\") != this->connection()->upflow()->data_map.end() && !this->connection()->upflow()->is_request){");
+                analyzerOutputStream.println("    if(this->connection()->upflow()->data_map.find(\"" + values[0] + "\") != this->connection()->upflow()->data_map.end() && !this->connection()->upflow()->is_request && " + attributeNames[0] + "_from_csv_line_" + lineCounter + ".compare(this->connection()->upflow()->domain_item_id_map[this->connection()->upflow()->invoke_id]) == 0){");
                 analyzerOutputStream.println("      cout << \"\\x1B[36m\" << \"[MAP DATA]\" << \"\\033[0m\" << this->connection()->upflow()->data_map[item_id_from_csv_line_" + lineCounter + "][0].first << endl;");
                 analyzerOutputStream.println("  " + buildDataString(values[2], lineCounter));
                 analyzerOutputStream.println("      BifEvent::generate_auto_event_" + lineCounter + "(connection()->bro_analyzer(),");

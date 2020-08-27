@@ -1,0 +1,3 @@
+item_id,index,data_type
+WAGO61850ServerLogicalDevice_GGIO17$CO$SPCSO2$Oper,0,BOOLEAN
+MIED2CTRL_V16GGIO1$ST$Ind3$stVal,0,BOOLEAN
